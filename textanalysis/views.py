@@ -90,6 +90,7 @@ import boto3
 from django.conf import settings
 import os
 
+<<<<<<< HEAD
 @api_view(['POST'])
 def upload_image(request):
     if 'image' not in request.FILES:
@@ -115,6 +116,26 @@ def upload_image(request):
         image_path = uploaded_image.image.path
         extracted_text = extract_text_from_image(image_path)
 
+=======
+
+@api_view(['POST'])
+def upload_image(request):
+    if 'image' not in request.FILES:
+        return Response({"error": "No image file provided."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    image = request.FILES['image']
+    try:
+        # Save image to the server
+        uploaded_image = UploadedImage(image=image)
+        uploaded_image.save()
+        
+        # Extract text from the image
+        image_path = uploaded_image.image.path
+        extracted_text = extract_text_from_image(image_path)
+        
+        # Process extracted text based on document type
+        document_type = request.data.get('document_type', 'unknown')  # Default to 'passport'
+>>>>>>> 065ae0d31777c6788375ea1be33160adea3a5627
         if document_type == 'passport':
             entities = process_passport(extracted_text)
         elif document_type == 'identity_card':
@@ -124,9 +145,15 @@ def upload_image(request):
         elif document_type == 'payment_receipt':
             entities = process_payment_receipt(extracted_text)
         else:
+<<<<<<< HEAD
             print("Invalid document type provided.")
             return Response({"error": "Invalid document type provided."}, status=status.HTTP_400_BAD_REQUEST)
 
+=======
+            return Response({"error": "Invalid document type provided."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Return response with extracted text and entities
+>>>>>>> 065ae0d31777c6788375ea1be33160adea3a5627
         response_data = {
             "id": uploaded_image.id,
             "image": uploaded_image.image.url,
@@ -136,6 +163,7 @@ def upload_image(request):
             'show_entities_button': True,
         }
         return Response(response_data, status=status.HTTP_200_OK)
+<<<<<<< HEAD
 
     except Exception as e:
         print("Error processing upload:", str(e))
@@ -147,13 +175,28 @@ def entities(request):
     entities = json.loads(entities_json) if entities_json else []
     document_type = request.session.get('document_type', 'Unknown')
 
+=======
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+def entities(request):
+    extracted_text = request.session.get('extracted_text', '')
+    entities_json = request.session.get('entities', '[]')
+    entities = json.loads(entities_json)
+    document_type = request.session.get('document_type', 'Unknown')
+>>>>>>> 065ae0d31777c6788375ea1be33160adea3a5627
     return render(request, 'detected_entities.html', {
         'extracted_text': extracted_text,
         'entities': entities,
         'document_type': document_type
     })
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 065ae0d31777c6788375ea1be33160adea3a5627
 def contact_view(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
