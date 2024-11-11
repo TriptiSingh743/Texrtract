@@ -1,0 +1,135 @@
+/* General Styles for Both Pages */
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #6fbec2, #b7bfe6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    animation: fadeIn 1s ease-in-out; /* Fade-in animation */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+h1 {
+    font-size: 36px;
+    color: #333333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+p {
+    font-size: 18px;
+    color: #555555;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.container {
+    background: linear-gradient(135deg, #bceeee, #f5d5f3);
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 800px;
+    width: 100%;
+    text-align: center;
+    animation: fadeIn 1s ease-in-out; /* Fade-in animation */
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+input[type="file"] {
+    display: block;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+button {
+    background: linear-gradient(135deg, #cdb9d6, #ACB6E5);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+    transition: background-color 0.3s ease; /* Smooth transition for hover */
+}
+
+button:hover {
+    background-color: #f0afe9;
+}
+
+#results {
+    background: #e5eaee;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    text-align: left;
+}
+
+#extracted-text {
+    background: #ffffffda;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    overflow-wrap: break-word;
+}
+
+/* Table Styles for Detected Entities Page */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+th, td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background: linear-gradient(135deg, #638fcc, #b7bfe6);
+    color: white;
+    font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:hover {
+    background-color: #ddd;
+    transition: background-color 0.3s ease; /* Smooth transition for hover */
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    color: white;
+    background: linear-gradient(135deg, #cdb9d6, #ACB6E5);
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 16px;
+    transition: background-color 0.3s ease; /* Smooth transition for hover */
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+/* Keyframes for animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

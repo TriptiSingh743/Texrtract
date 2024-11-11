@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Document Type</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles1.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 10px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+        }
+
+        .button-group label {
+            display: block;
+            padding: 15px;
+            margin: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            width: 200px;
+            background-color:#98c7e7;
+        }
+
+        .button-group input[type="radio"] {
+            display: none;
+        }
+
+        .button-group input[type="radio"]:checked + label {
+            background-color: #007bff;
+            color: black;
+        }
+
+        .hero-content {
+            text-align: center;
+            padding: 20px;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Extraction</div>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'document_type_selection' %}">Get Started</a></li>
+            </ul>
+        </nav>
+        <section class="hero">
+            <div class="hero-content">
+                    <h1>Select Document Type</h1>
+                    <form id="document-type-form">
+                        {% csrf_token %}
+                        <div class="button-group">
+                            <input type="radio" id="option1" name="document_type" value="passport" required>
+                            <label for="option1">Passport</label>
+    
+                            <input type="radio" id="option2" name="document_type" value="identity_card">
+                            <label for="option2">Identity Card</label>
+    
+                            <input type="radio" id="option3" name="document_type" value="aadhar_card">
+                            <label for="option3">Aadhar Card</label>
+    
+                            <input type="radio" id="option4" name="document_type" value="payment_receipt">
+                            <label for="option4">Payment Receipt</label>
+                        </div>
+                        <button type="submit" style="margin-top: 20px;">Next</button>
+                    </form>
+                </div>
+            </div>
+        </section>    
+    </header>
+    
+    <footer>
+        <p>&copy; 2024 Extraction. All rights reserved.</p>
+    </footer>
+    
+    <script>
+        $(document).ready(function() {
+            $('#document-type-form').on('submit', function(e) {
+                e.preventDefault();
+                var selectedType = $('input[name="document_type"]:checked').val();
+
+                if (selectedType) {
+                    // Redirect to upload page with selected document type as a query parameter
+                    window.location.href = '{% url "upload_page" %}?document_type=' + encodeURIComponent(selectedType);
+                } else {
+                    alert('Please select a document type.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

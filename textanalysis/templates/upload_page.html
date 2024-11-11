@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Text Extractor</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'styles1.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Custom styles */
+        #results h2 {
+            background: #e5eaee;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        #extracted-text {
+            background: black;
+            color: white;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-wrap: break-word;
+        }
+
+        #view-entities-btn {
+            display: center;
+            padding: 10px 20px;
+            color: white;
+            background: linear-gradient(135deg, #cdb9d6, #ACB6E5);
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        #view-entities-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Extraction</div>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'document_type_selection' %}">Get Started</a></li>
+            </ul>
+        </nav>
+        <section class="hero">
+            <div class="hero-content">    
+                <h1>Image Text Extractor</h1>
+                <form id="upload-form" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" id="document-type" name="document_type" value="{{ request.GET.document_type }}">
+                    <div class="form-group">
+                        <input type="file" id="image" name="image" accept="image/*" required>
+                    </div>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        </section>
+    </header>
+
+    <div id="please-wait" style="display:none;">
+        <p>Please wait a few moments while we process your image.</p>
+    </div>
+
+    <div class="container"> 
+        <div id="results" style="display:none;">
+            <h2>Extracted Text</h2>
+            <div id="extracted-text-container">
+                <pre id="extracted-text"></pre>
+            </div>
+            <button id="view-entities-btn" style="display:none;">View Detected Entities</button>
+        </div>
+    </div>
+    
+    <script>
+        $(document).ready(function() {
+            $('#upload-form').on('submit', function(e) {
+                e.preventDefault();
+                
+                $('#please-wait').show(); // Show the "Please wait" message
+                $('#results').hide();     // Hide the results section
+                
+                var formData = new FormData(this);
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{% url "upload_image" %}',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        $('#please-wait').hide(); // Hide the "Please wait" message
+                        
+                        if (response.error) {
+                            alert(response.error);
+                        } else {
+                            $('#results').show();
+                            $('#extracted-text').text(response.extracted_text);
+                            if (response.show_entities_button) {
+                                $('#view-entities-btn').show().click(function() {
+                                    window.location.href = '{% url "entities" %}';
+                                });
+                            }
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $('#please-wait').hide(); // Hide the "Please wait" message on error
+                        console.log(xhr.responseText);
+                        alert('An error occurred. Please try again.');
+                    }
+                });
+            });
+        });
+    </script>
+    
+    <footer>
+        <p>&copy; 2024 Extraction. All rights reserved.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'styles1.css' %}">
+    <script src="{% static 'script.js' %}"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Extraction</div>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Image Text Extractor</h1>
+                <p>Image Text Extractor uses advanced optical character recognition (OCR) technology to 
+                    efficiently convert text from images into editable and searchable formats.</p>
+                    <a href="{% url 'document_type_selection' %}" class="btn">Get Started</a>
+
+            </div>
+        </section>
+    </header>
+
+    <section id="features">
+        <div class="container">
+            <h2>Our Features</h2>
+            <div class="feature">
+                <h3>Feature One</h3>
+                <p>OCR Technology: Converts text from scanned documents, photos, or screenshots into editable and searchable text.</p>
+            </div>
+            <div class="feature">
+                <h3>Feature Two</h3>
+                <p>Customizable Output: Allows you to specify output formats such as plain text.</p>
+            </div>
+            <div class="feature">
+                <h3>Feature Three</h3>
+                <p>Field-Specific Extraction: Extracts specific information such as names, locations, phone numbers, postal codes, dates, and other relevant fields from images.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="about">
+        <div class="container">
+            <h2>About Us</h2>
+            <p>Welcome to this site. We specialize in extracting and converting details from
+             various types of images into text. Utilizing AWS services, including Textract and Comprehend, 
+             our website delivers accurate and efficient text extraction for diverse image formats. 
+             Thank you for visiting, and we look forward to helping you transform your image data into actionable information.</p>
+        </div>
+    </section>
+
+    <section id="contact">
+        <div class="container">
+            <h2>Contact Us</h2>
+            <form method="post" action="{% url 'contact' %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" required></textarea>
+                
+                <button type="submit">Send Message</button>
+
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Extraction. All rights reserved.</p>
+    </footer>
+</body>
+</html>

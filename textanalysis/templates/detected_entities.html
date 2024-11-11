@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detected Entities</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            text-align: center; /* Center content */
+        }
+
+        /* Table Styles for Detected Entities Page */
+        table {
+            width: 80%;
+            margin: 20px auto; /* Center table */
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #638fcc, #b7bfe6);
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+            transition: background-color 0.3s ease; /* Smooth transition for hover */
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            color: white;
+            background: linear-gradient(135deg, #cdb9d6, #ACB6E5);
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 16px;
+            transition: background-color 0.3s ease; /* Smooth transition for hover */
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Center the hero content */
+        .hero-content {
+            width: 100%;
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+    </style>    
+</head>
+<body>
+    <header> 
+        <section class="hero">
+           <div class="hero-content">
+              <h1>Detected Entities</h1>
+              <p><strong>Document Type:</strong> {{ document_type }}</p>
+                <table>
+                <thead>
+                   <tr>
+                      
+                      <th>Type</th>
+                      <th>Text</th>
+                      <th>Begin Offset</th>
+                      <th>End Offset</th><th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entity in entities %}
+                    
+                    <tr>
+                      <td>{{ entity.Score }}</td>
+                      <td>{{ entity.Type }}</td>
+                       <td>{{ entity.Text }}</td>
+                       <td>{{ entity.BeginOffset }}</td>
+                       <td>{{ entity.EndOffset }}</td>
+                    </tr>
+                   {% empty %}
+                   <tr>
+                       <td colspan="5">No entities detected</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
+                <a href="/" class="btn">Back to home</a>
+           </div>
+        </section>
+    </header>  
+    <footer>
+        <p>&copy; 2024 Extraction. All rights reserved.</p>
+    </footer>     
+</body>
+</html>

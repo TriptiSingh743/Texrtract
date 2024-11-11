@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Thank You</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'styles1.css' %}">
+</head>
+<style>
+body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+}
+
+    /* Flex container for centering *//* Center the container and content */
+.container {
+    display: flex;
+    background: linear-gradient(135deg, #cdb9d6, #ACB6E5);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: calc(50vh - 50px); /* Full viewport height minus footer height */
+    text-align: center;
+    
+}
+
+/* Style the heading */
+h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+/* Style the paragraph */
+p {
+    font-size: 1.2em;
+    line-height: 1.5;
+    color: rgb(20, 20, 20);
+}
+
+/* Style for footer */
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #333;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}
+</style>
+<body>
+    <header>
+        <nav>
+            <div class="logo">Extraction</div>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'document_type_selection' %}">Get Started</a></li>
+            </ul>
+        </nav>
+    
+          
+        <div class="container">
+            <h2>Thank You for Contacting Us!</h2>
+            <p>We have received your message and will get back to you shortly.</p>
+        </div>
+    </header>
+    <footer>
+        <p>&copy; 2024 Extraction. All rights reserved.</p>
+    </footer>
+</body>
+</html>
