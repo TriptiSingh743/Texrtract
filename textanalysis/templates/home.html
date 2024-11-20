@@ -1,83 +1,362 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'styles1.css' %}">
     <script src="{% static 'script.js' %}"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TeamworkBot</title>
+    <style>
+        /* Styles for the chatbot modal */
+        #chatbot-modal {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            width: 350px;
+            height: 500px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            flex-direction: column;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(100%);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        #chatbot-modal.show {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #chatbot-header {
+            display: flex;
+            align-items: center;
+            background-color: #8A2BE2;
+            color: #fff;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        #chatbot-logo {
+            width: 40px;  /* Increased size */
+            height: 40px; /* Increased size */
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        
+        #chatbot-title {
+            flex-grow: 1;
+            font-size: 16px;
+        }
+        
+        #refresh-btn, #logout-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #fff;
+    font-size: 20px;  /* Adjust font size as needed */
+    margin-left: 5px; /* Reduced margin to bring them closer */
+    transition: color 0.3s ease;
+}
+
+#refresh-btn {
+    margin-right: 0; /* Ensures no extra margin on the right */
+}
+
+#logout-btn {
+    margin-left: 0; /* Removes the left margin to eliminate gap */
+}
+
+/* Change the size of the icons */
+#refresh-btn img, #logout-btn img {
+    width: 30px;  /* Adjust size as needed */
+    height: 30px; /* Adjust size as needed */
+}
+
+
+        #chatbox {
+            height: 400px;
+            width: 100%;
+            overflow-y: auto;
+            border-bottom: 1px solid #ddd;
+            padding: 10px;
+            background-color: #fafafa;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        #chatbox p {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #f1f1f1;
+            max-width: 80%;
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        #chatbox p.bot {
+            background-color: #f0f0ff;
+        }
+
+        #chatbox p.user {
+            background-color: #e0ffe0;
+            align-self: flex-end;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        #user-input-section {
+            display: flex;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-top: 1px solid #ddd;
+        }
+
+        #user-input {
+            flex-grow: 1;
+            padding: 10px;
+            border-radius: 25px;
+            border: 1px solid #ddd;
+            margin-right: 10px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        #user-input:focus {
+            border-color: #8A2BE2;
+        }
+
+        #send-btn {
+            width: 80px;
+            padding: 10px;
+            background-color: #8A2BE2;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        #send-btn:hover {
+            background-color: #6f1bb0;
+            transform: scale(1.05);
+        }
+
+        #send-btn:disabled {
+            background-color: #cccccc;
+        }
+
+        /* Styles for the chatbot button */
+        #chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        #chatbot-button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        #chatbot-button:hover {
+            transform: scale(1.1);
+        }
+
+        #chatbot-button img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
 </head>
+
 <body>
-    <header>
-        <nav>
-            <div class="logo">Extraction</div>
-            <ul>
-                <li><a href="#home">Home</a></li>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-        <section class="hero">
-            <div class="hero-content">
-                <h1>Image Text Extractor</h1>
-                <p>Image Text Extractor uses advanced optical character recognition (OCR) technology to 
-                    efficiently convert text from images into editable and searchable formats.</p>
-                    <a href="{% url 'document_type_selection' %}" class="btn">Get Started</a>
-
-            </div>
-        </section>
-    </header>
-
-    <section id="features">
-        <div class="container">
-            <h2>Our Features</h2>
-            <div class="feature">
-                <h3>Feature One</h3>
-                <p>OCR Technology: Converts text from scanned documents, photos, or screenshots into editable and searchable text.</p>
-            </div>
-            <div class="feature">
-                <h3>Feature Two</h3>
-                <p>Customizable Output: Allows you to specify output formats such as plain text.</p>
-            </div>
-            <div class="feature">
-                <h3>Feature Three</h3>
-                <p>Field-Specific Extraction: Extracts specific information such as names, locations, phone numbers, postal codes, dates, and other relevant fields from images.</p>
-            </div>
+<header>
+    <nav>
+        <div class="logo">Extraction</div>
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Image Text Extractor</h1>
+            <p>Image Text Extractor uses advanced optical character recognition (OCR) technology to 
+                efficiently convert text from images into editable and searchable formats.</p>
+            <a href="{% url 'document_type_selection' %}" class="btn">Get Started</a>
         </div>
     </section>
+</header>
 
-    <section id="about">
-        <div class="container">
-            <h2>About Us</h2>
-            <p>Welcome to this site. We specialize in extracting and converting details from
-             various types of images into text. Utilizing AWS services, including Textract and Comprehend, 
-             our website delivers accurate and efficient text extraction for diverse image formats. 
-             Thank you for visiting, and we look forward to helping you transform your image data into actionable information.</p>
+<section id="features">
+    <div class="container">
+        <h2>Our Features</h2>
+        <div class="feature">
+            <h3>Feature One</h3>
+            <p>OCR Technology: Converts text from scanned documents, photos, or screenshots into editable and searchable text.</p>
         </div>
-    </section>
-
-    <section id="contact">
-        <div class="container">
-            <h2>Contact Us</h2>
-            <form method="post" action="{% url 'contact' %}">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
-                
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-                
-                <label for="message">Message:</label>
-                <textarea id="message" name="message" required></textarea>
-                
-                <button type="submit">Send Message</button>
-
-            </form>
+        <div class="feature">
+            <h3>Feature Two</h3>
+            <p>Customizable Output: Allows you to specify output formats such as plain text.</p>
         </div>
-    </section>
+        <div class="feature">
+            <h3>Feature Three</h3>
+            <p>Field-Specific Extraction: Extracts specific information such as names, locations, phone numbers, postal codes, dates, and other relevant fields from images.</p>
+        </div>
+    </div>
+</section>
 
-    <footer>
-        <p>&copy; 2024 Extraction. All rights reserved.</p>
-    </footer>
+<section id="about">
+    <div class="container">
+        <h2>About Us</h2>
+        <p>Welcome to this site. We specialize in extracting and converting details from
+            various types of images into text. Utilizing AWS services, including Textract and Comprehend, 
+            our website delivers accurate and efficient text extraction for diverse image formats. 
+            Thank you for visiting, and we look forward to helping you transform your image data into actionable information.</p>
+    </div>
+</section>
+
+<section id="contact">
+    <div class="container">
+        <h2>Contact Us</h2>
+        <form method="post" action="{% url 'contact' %}">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+            
+            <label for="message">Message:</label>
+            <textarea id="message" name="message" required></textarea>
+            
+            <button type="submit">Send Message</button>
+        </form>
+    </div>
+</section>
+
+<!-- Chatbot Button -->
+<div id="chatbot-container">
+    <button id="chatbot-button">
+        <img src="https://miro.medium.com/v2/resize:fit:612/1*C_LFPy6TagD1SEN5SwmVRQ.jpeg" alt="TeamworkBot">
+    </button>
+</div>
+
+<!-- Chatbot Modal -->
+<div id="chatbot-modal">
+    <div id="chatbot-header">
+        <img id="chatbot-logo" src="https://miro.medium.com/v2/resize:fit:612/1*C_LFPy6TagD1SEN5SwmVRQ.jpeg" alt="TeamworkBot Logo">
+        <div id="chatbot-title">TeamworkBot</div>
+        <button id="refresh-btn">
+            <img src="https://cdn-icons-png.flaticon.com/512/2267/2267901.png" alt="Refresh Icon" style="width: 20px; height: 20px;">
+        </button>
+        <button id="logout-btn">
+            <img src="https://cdn-icons-png.flaticon.com/512/4421/4421772.png" alt="Logout Icon" style="width: 20px; height: 20px;">
+        </button>
+        
+        
+        
+        
+    </div>
+    <div id="chatbox"></div>
+    <div id="user-input-section">
+        <input type="text" id="user-input" placeholder="Type a message...">
+        <button id="send-btn">Send</button>
+    </div>
+</div>
+
+<script>
+    // Function to send user message to backend and handle response
+    async function sendMessageToChatbot(message) {
+        try {
+            const response = await fetch("{% url 'chatbot_view' %}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}", // Ensures CSRF protection
+                },
+                body: JSON.stringify({ message }),
+            });
+            
+
+            const data = await response.json();
+            return data.response;
+        } catch (error) {
+            console.error("Error communicating with chatbot:", error);
+            return "Sorry, there was an error. Please try again later.";
+        }
+    }
+
+    // Chatbot toggle logic
+    document.getElementById("chatbot-button").addEventListener("click", function () {
+        var modal = document.getElementById("chatbot-modal");
+        modal.classList.toggle("show");
+    });
+
+    // Refresh button logic
+    document.getElementById("refresh-btn").addEventListener("click", function () {
+        var chatbox = document.getElementById("chatbox");
+        chatbox.innerHTML = ""; // Clears the chatbox content
+    });
+
+    // Logout button logic
+    document.getElementById("logout-btn").addEventListener("click", function () {
+        var modal = document.getElementById("chatbot-modal");
+        modal.classList.remove("show"); // Closes the chatbot
+    });
+
+    // Handle sending messages
+    document.getElementById("send-btn").addEventListener("click", async function () {
+        const userInput = document.getElementById("user-input").value;
+        if (userInput.trim()) {
+            // Append user message to chatbox
+            const chatbox = document.getElementById("chatbox");
+            const userMessage = document.createElement("p");
+            userMessage.classList.add("user");
+            userMessage.textContent = userInput;
+            chatbox.appendChild(userMessage);
+
+            // Clear input field
+            document.getElementById("user-input").value = "";
+
+            // Scroll to the bottom of the chat
+            chatbox.scrollTop = chatbox.scrollHeight;
+
+            // Send message to backend and display response
+            const botResponse = await sendMessageToChatbot(userInput);
+            const botMessage = document.createElement("p");
+            botMessage.classList.add("bot");
+            botMessage.textContent = botResponse;
+            chatbox.appendChild(botMessage);
+
+            // Scroll to the bottom again for bot response
+            chatbox.scrollTop = chatbox.scrollHeight;
+        }
+    });
+</script>
+
+
 </body>
 </html>
