@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path
 from . import views
 from .views import upload_image
+from . import views
 
 from django.urls import path
 
@@ -14,6 +15,7 @@ urlpatterns = [
     path('entities/', views.entities, name='entities'),
     path('contact/', views.contact_view, name='contact'),
     path('success/', views.success_view, name='success'),
+    path('chatbot/', views.chatbot_view, name='chatbot_view'),
     
 ]
      
