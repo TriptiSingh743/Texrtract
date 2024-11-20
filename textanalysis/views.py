@@ -74,6 +74,65 @@ from .serializers import UploadedImageSerializer
 from .models import UploadedImage
 
 from django.core.exceptions import ValidationError
+from django.views.decorators.csrf import csrf_exempt
+import openai
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+@csrf_exempt
+def chatbot_view(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        user_message = data.get('message', '').strip().lower()
+
+        custom_responses = {
+            "extract text": "You just need to upload an image, and our OCR module will extract all the text from it.",
+            "supported documents": "Our OCR module supports passports, identity cards, Aadhaar cards, and payment receipts.",
+            "detect entities": "The OCR module can detect entities like 'PERSON', 'LOCATION', 'DATE', and 'ORGANIZATION'.",
+            "view extracted text": "After uploading a document, the extracted text will be displayed on a separate page.",
+            "upload image": "To upload an image, simply choose the document's image and click the upload button.",
+            "features": (
+                "Here are the features of our OCR module:\n"
+                "1. OCR Technology: Converts text from scanned documents, photos, or screenshots into editable and searchable text.\n"
+                "2. Customizable Output: Allows specifying output formats such as plain text.\n"
+                "3. Field-Specific Extraction: Extracts specific information like names, locations, and dates."
+            ),
+            "about us": (
+                "Welcome to this site. We specialize in extracting and converting details from various types of images into text. "
+                "Utilizing AWS services, including Textract and Comprehend, our website delivers accurate and efficient text extraction."
+            ),
+        }
+
+        # Match user message with custom responses
+        for key, response in custom_responses.items():
+            if key in user_message:
+                return JsonResponse({
+                    "response": response,
+                    "assistant_id": os.getenv("assistant_id"),
+                    "thread_id": os.getenv("thread_id")
+                })
+
+        # Fallback to OpenAI for general queries
+        try:
+            response = openai.ChatCompletion.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant for the OCR module of the teamWork software."},
+                    {"role": "user", "content": user_message}
+                ],
+                max_tokens=1000
+            )
+            answer = response.choices[0].message['content'].strip()
+        except Exception as e:
+            answer = f"Sorry, there was an error processing your request. Please try again later. Error: {str(e)}"
+
+        return JsonResponse({
+            "response": answer,
+            "assistant_id":os.getenv("assistant_id"),
+            "thread_id": os.getenv("thread_id")
+        })
+
+
 
 def validate_image_format(image):
     valid_image_formats = ['image/jpeg', 'image/png']
@@ -89,8 +148,9 @@ from .serializers import UploadedImageSerializer
 import boto3
 from django.conf import settings
 import os
+def chatbot_page(request):
+    return render(request, 'chatbot_page.html')
 
-<<<<<<< HEAD
 @api_view(['POST'])
 def upload_image(request):
     if 'image' not in request.FILES:
@@ -116,26 +176,6 @@ def upload_image(request):
         image_path = uploaded_image.image.path
         extracted_text = extract_text_from_image(image_path)
 
-=======
-
-@api_view(['POST'])
-def upload_image(request):
-    if 'image' not in request.FILES:
-        return Response({"error": "No image file provided."}, status=status.HTTP_400_BAD_REQUEST)
-    
-    image = request.FILES['image']
-    try:
-        # Save image to the server
-        uploaded_image = UploadedImage(image=image)
-        uploaded_image.save()
-        
-        # Extract text from the image
-        image_path = uploaded_image.image.path
-        extracted_text = extract_text_from_image(image_path)
-        
-        # Process extracted text based on document type
-        document_type = request.data.get('document_type', 'unknown')  # Default to 'passport'
->>>>>>> 065ae0d31777c6788375ea1be33160adea3a5627
         if document_type == 'passport':
             entities = process_passport(extracted_text)
         elif document_type == 'identity_card':
@@ -145,15 +185,9 @@ def upload_image(request):
         elif document_type == 'payment_receipt':
             entities = process_payment_receipt(extracted_text)
         else:
-<<<<<<< HEAD
             print("Invalid document type provided.")
             return Response({"error": "Invalid document type provided."}, status=status.HTTP_400_BAD_REQUEST)
 
-=======
-            return Response({"error": "Invalid document type provided."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        # Return response with extracted text and entities
->>>>>>> 065ae0d31777c6788375ea1be33160adea3a5627
         response_data = {
             "id": uploaded_image.id,
             "image": uploaded_image.image.url,
@@ -163,7 +197,6 @@ def upload_image(request):
             'show_entities_button': True,
         }
         return Response(response_data, status=status.HTTP_200_OK)
-<<<<<<< HEAD
 
     except Exception as e:
         print("Error processing upload:", str(e))
@@ -175,28 +208,13 @@ def entities(request):
     entities = json.loads(entities_json) if entities_json else []
     document_type = request.session.get('document_type', 'Unknown')
 
-=======
-    
-    except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-def entities(request):
-    extracted_text = request.session.get('extracted_text', '')
-    entities_json = request.session.get('entities', '[]')
-    entities = json.loads(entities_json)
-    document_type = request.session.get('document_type', 'Unknown')
->>>>>>> 065ae0d31777c6788375ea1be33160adea3a5627
     return render(request, 'detected_entities.html', {
         'extracted_text': extracted_text,
         'entities': entities,
         'document_type': document_type
     })
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 065ae0d31777c6788375ea1be33160adea3a5627
 def contact_view(request):
     if request.method == 'POST':
         form = ContactForm(request.POST)
@@ -224,3 +242,4 @@ def contact_view(request):
 
 def success_view(request):
     return render(request, 'success.html')
+
